@@ -5,28 +5,31 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/pkgerrors"
 	"os"
-	"time"
 )
 
+// Aliases
+type RotateConfig = rollingwriter.Config
+type ConsoleConfig = zerolog.ConsoleWriter
+
+// Config
+type Config struct {
+	// Log file options
+	RwConfig func(*RotateConfig)
+	// Console writer options
+	CwConfig func(*ConsoleConfig)
+}
+
 // New creates a root logger with file and console output
-func New(LogPath string, FileName string) zerolog.Logger {
+func New(options Config) zerolog.Logger {
 	// Create new logger
 	logger := zerolog.New(os.Stderr).With().Timestamp().Logger()
 	// Enable stack trace
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
 	// Define file log
-	writer := NewRotateWriter(
-		func(rc *rollingwriter.Config) {
-			rc.LogPath = LogPath
-			rc.FileName = FileName
-		},
-	)
+	writer := NewRotateWriter(options.RwConfig)
 	// Set rotate writer as the global output
 	logger = logger.Output(writer)
 	// Add console writer hook
-	hook := NewConsoleWriterHook(
-		func(w *zerolog.ConsoleWriter) {
-			w.TimeFormat = time.RFC3339
-		}, )
+	hook := NewConsoleWriterHook(options.CwConfig)
 	return logger.Hook(hook)
 }
