@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"github.com/go-mods/zerolog-rotate"
 	"github.com/go-mods/zerolog-rotate/log"
+	"github.com/iancoleman/strcase"
 	"github.com/pkg/errors"
 	"time"
 )
@@ -11,8 +13,18 @@ func main() {
 
 	// Create the main logger
 	log.Logger = logger.New(logger.Config{
-		RwConfig: func(rw *logger.RotateConfig) { rw.LogPath = "example/logs"; rw.FileName = "example" },
-		CwConfig: func(cw *logger.ConsoleConfig) { cw.TimeFormat = time.RFC3339 },
+		RwConfig: func(rw *logger.ZrRotateConfig) {
+			rw.LogPath = "examples/logs"
+			rw.FileName = "main"
+			rw.TimeTagFormat = time.RFC3339
+		},
+		CwConfig: func(cw *logger.ZrConsoleConfig) {
+			cw.NoColor = true
+			cw.TimeFormat = time.StampMilli
+			cw.FormatLevel = func(i interface{}) string {
+				return fmt.Sprintf("| %-6s|", strcase.ToCamel(i.(string)))
+			}
+		},
 	})
 
 	// Info
