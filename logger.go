@@ -8,19 +8,20 @@ import (
 )
 
 // Aliases
-type RotateConfig = rollingwriter.Config
-type ConsoleConfig = zerolog.ConsoleWriter
+type ZrRotateConfig = rollingwriter.Config
+type ZrConsoleConfig = zerolog.ConsoleWriter
+type ZrLogger = zerolog.Logger
 
 // Config
 type Config struct {
 	// Log file options
-	RwConfig func(*RotateConfig)
+	RwConfig func(*ZrRotateConfig)
 	// Console writer options
-	CwConfig func(*ConsoleConfig)
+	CwConfig func(*ZrConsoleConfig)
 }
 
 // New creates a root logger with file and console output
-func New(options Config) zerolog.Logger {
+func New(options Config) ZrLogger {
 	// Create new logger
 	logger := zerolog.New(os.Stderr).With().Timestamp().Logger()
 	// Enable stack trace

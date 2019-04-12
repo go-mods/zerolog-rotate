@@ -5,12 +5,12 @@ import (
 )
 
 type consoleWriterHook struct {
-	writer zerolog.ConsoleWriter
-	logger zerolog.Logger
+	writer ZrConsoleConfig
+	logger ZrLogger
 }
 
 // NewConsoleWriterHook creates and initializes a new consoleWriterHook.
-func NewConsoleWriterHook(options ...func(w *zerolog.ConsoleWriter)) zerolog.Hook {
+func NewConsoleWriterHook(options ...func(w *ZrConsoleConfig)) zerolog.Hook {
 	// Create a new console writer
 	writer := zerolog.NewConsoleWriter(options...)
 	// Create a new logger
